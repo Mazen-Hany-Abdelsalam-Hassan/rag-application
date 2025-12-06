@@ -1,1 +1,1 @@
- 
+from .inference_service import Factory
