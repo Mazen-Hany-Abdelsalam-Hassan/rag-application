@@ -24,9 +24,11 @@ archive.zip
 *~
 .*.sw?
 .cache
-
+assets
 # macOS
 .DS_Store
 log.log
 # Ignore while the setup still depends on requirements.txt files
 uv.lock
+exp.py
+test.py
