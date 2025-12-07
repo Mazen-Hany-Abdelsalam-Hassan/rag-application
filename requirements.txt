@@ -3,3 +3,4 @@ uvicorn==0.38.0
 pydantic-settings==2.12.0
 openai==2.9.0
 groq==0.37.1
+qdrant-client==1.16.1
