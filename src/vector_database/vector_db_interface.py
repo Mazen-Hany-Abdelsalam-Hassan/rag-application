@@ -39,7 +39,7 @@ class VectorDbInterface(ABC):
                 batch_size:int=50)->bool:
         pass
     @abstractmethod
-    def vector_search(self,vector:List[float] ,topk:int ):
+    def simple_vector_search(self,vector:List[float] ,topk:int ):
         pass
 
 
