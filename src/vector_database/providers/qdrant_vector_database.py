@@ -2,11 +2,11 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
 from ..vector_db_interface import VectorDbInterface
 from ..vector_db_enum import QdrantDistanceEnum
-from typing import Literal
+from typing import Literal , List
 import uuid
 import logging
 from qdrant_client.models import PointStruct
-
+from models import VectorDBResponse
 
 class QdrantVectorDatabase(VectorDbInterface):
     def __init__(self,database_path:str,similarity_metric:Literal['cosine','euclid'],topk:int,vector_size:int ):
@@ -16,9 +16,11 @@ class QdrantVectorDatabase(VectorDbInterface):
         self.logger = logging.getLogger(__name__)
         self.database_path = database_path
         if similarity_metric =='cosine':
-            self.similarity_metric = Distance.COSINE
+            self.similarity_metric = QdrantDistanceEnum.cosine.value
+            self.logger.info("Used similarity metric in Qdrant is Cosine")
         elif similarity_metric =='euclid':
-            self.similarity_metric = Distance.EUCLID
+            self.similarity_metric = QdrantDistanceEnum.euclid.value
+            self.logger.info("Used similarity metric in Qdrant is Euclid")
         else:
             self.logger.error(f"the similarity metric in qdrant must be cosine or euclid")
     
@@ -141,7 +143,30 @@ class QdrantVectorDatabase(VectorDbInterface):
         return True
 
 
-    def vector_search(self, vector, topk):
-        return super().vector_search(vector, topk)
+    def simple_vector_search(self ,vector:List[float]
+                            ,collection_name
+                            ,topk):
+        results = self.client.query_points(
+                    collection_name=collection_name,
+                    query=vector,
+                    limit=topk).points
+        
+        response = []
+        for result in results:
+            payload = result.payload
+            score = result.score
+            chunk = payload['chunk']
+            meta_data = payload['meta_data']
+            response.append(
+                VectorDBResponse(text_chunk=chunk,
+                meta_data=meta_data,
+                socre = score))
+        return response
+
+            
+        
+        
+
+        
     
         
