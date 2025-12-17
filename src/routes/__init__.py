@@ -1,1 +1,2 @@
-from .base_route import base_route
+from .base_route import BaseRoute
+from .file_upload_route import FileUploadRoute
