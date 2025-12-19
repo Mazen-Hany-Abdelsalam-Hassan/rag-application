@@ -26,11 +26,13 @@ class DataLoadingController(BaseController):
     def is_valid_file(self,file:UploadFile):
         if self._is_valid_type(file) and self._is_valid_size(file):
             file_name =DataLoadingController.clean_file_name(file.filename)
-            save_path = os.path.join(self.source_path,'assets' ,self.user )
-            os.makedirs(save_path , exist_ok=True)
-            save_path = os.path.join(save_path,file_name )
-            return (DataControllerEnum.FILE_UPLOADED_SUCCESSFULLY.value
-                    , save_path)
+            file_name, extension = file_name.split('.')
+            file_name = file_name+"_"+DataLoadingController.random_string()
+            self.user_directory = os.path.join(self.save_path,self.user)
+            os.makedirs(self.user_directory , exist_ok=True)
+            #save_path = os.path.join(save_path,file_name +'.'+extension)
+            return (DataControllerEnum.FILE_UPLOADED_SUCCESSFULLY.value,
+                    file_name +'.'+extension)
         else :
 
             return (DataControllerEnum.FILE_NOT_UPLOADED_SUCCESSFULLY.value,
