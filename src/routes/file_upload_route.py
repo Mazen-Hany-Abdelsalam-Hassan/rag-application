@@ -24,7 +24,7 @@ async def file_upload(User:str, file:UploadFile):
 
         
         return JSONResponse(content={"message": response,
-                                     "file_id":file_name})
+                                     "process_id":file_name})
     
     return JSONResponse(content={"message": response} 
                         ,status_code=status.HTTP_400_BAD_REQUEST)
