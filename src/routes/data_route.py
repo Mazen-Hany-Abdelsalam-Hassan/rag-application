@@ -11,7 +11,7 @@ DataRoute =APIRouter(prefix="/Rag",
 async def file_upload(User:str, file:UploadFile):
     data_controller = DataLoadingController(User)
     chunk_size = data_controller.environment_variable.CHUNK_SIZE
-    response , file_name =  data_controller.is_valid_file(file)
+    file_name =  data_controller.is_valid_file(file)
     
     if file_name: 
         file_path = os.path.join(
@@ -24,10 +24,10 @@ async def file_upload(User:str, file:UploadFile):
                 await f.write(chunk)
 
         
-        return JSONResponse(content={"message": response,
+        return JSONResponse(content={"message": ResponseEnum.FILE_UPLOADED_SUCCESSFULLY.value,
                                      "process_id":file_name})
     
-    return JSONResponse(content={"message": response} 
+    return JSONResponse(content={"message": ResponseEnum.FILE_NOT_UPLOADED_SUCCESSFULLY.value} 
                         ,status_code=status.HTTP_400_BAD_REQUEST)
     
 

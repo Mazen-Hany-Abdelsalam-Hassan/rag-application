@@ -31,9 +31,6 @@ class DataLoadingController(BaseController):
             file_name = file_name+"_"+DataLoadingController.random_string()
             self.user_directory = os.path.join(self.save_path,self.user)
             os.makedirs(self.user_directory , exist_ok=True)
-            return (ResponseEnum.FILE_UPLOADED_SUCCESSFULLY.value,
-                    file_name +'.'+extension)
+            return file_name +'.'+extension
         else :
-
-            return (ResponseEnum.FILE_NOT_UPLOADED_SUCCESSFULLY.value,
-                    False)
+            return  False
