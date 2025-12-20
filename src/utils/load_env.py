@@ -6,7 +6,8 @@ class Settings(BaseSettings):
     APP_NAME:str 
     ALLOWED_FILE_TYPES:List[str]
     MAXIMUM_ALLOWED_SIZE:int ## 5MIB of data 
-
+    MONGO_DB_CLIENT:str 
+    MONGO_DB_NAME:str
 
     OPENAI_KEY:Optional[str] = "OLLAMA"
     OPENAI_URL:str
