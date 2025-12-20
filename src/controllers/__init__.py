@@ -1,2 +1,3 @@
 from .inference_service import Factory
 from .data_loading_controller import DataLoadingController
+from .data_processing_controller  import DataProcessingController
