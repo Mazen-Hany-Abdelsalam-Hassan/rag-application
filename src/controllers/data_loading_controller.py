@@ -1,8 +1,9 @@
 from .base_controller import BaseController
 from  fastapi import UploadFile
-from models import DataControllerEnum
+from models import ResponseEnum
 import logging
 import os
+
 class DataLoadingController(BaseController):
     def __init__(self , User:str):
         super().__init__()
@@ -13,13 +14,13 @@ class DataLoadingController(BaseController):
         if file.content_type in self.environment_variable.ALLOWED_FILE_TYPES:      
             return True 
         else:
-            self.logger.error(DataControllerEnum.FILE_TYPE_NOT_SUPPORTED.value)
+            self.logger.error(ResponseEnum.FILE_TYPE_NOT_SUPPORTED.value)
             return False 
     def _is_valid_size(self , file:UploadFile):
         if file.size  <= self.max_size:   
             return True
         else:
-            self.logger.error(DataControllerEnum.FILE_SIZE_EXCEDED.value)
+            self.logger.error(ResponseEnum.FILE_SIZE_EXCEDED.value)
             return False  
     
     
@@ -30,10 +31,9 @@ class DataLoadingController(BaseController):
             file_name = file_name+"_"+DataLoadingController.random_string()
             self.user_directory = os.path.join(self.save_path,self.user)
             os.makedirs(self.user_directory , exist_ok=True)
-            #save_path = os.path.join(save_path,file_name +'.'+extension)
-            return (DataControllerEnum.FILE_UPLOADED_SUCCESSFULLY.value,
+            return (ResponseEnum.FILE_UPLOADED_SUCCESSFULLY.value,
                     file_name +'.'+extension)
         else :
 
-            return (DataControllerEnum.FILE_NOT_UPLOADED_SUCCESSFULLY.value,
+            return (ResponseEnum.FILE_NOT_UPLOADED_SUCCESSFULLY.value,
                     False)
