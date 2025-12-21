@@ -38,7 +38,6 @@ async def file_upload(request:Request,User:str, file:UploadFile):
                     os.remove(file_path)
                     break
                 await f.write(chunk)
-        print(await user_model.add_chunk_size_and_overlap("Mezo","albama_n9VkRJlv.txt",200,50))
         
         return JSONResponse(content={"message": ResponseEnum.FILE_UPLOADED_SUCCESSFULLY.value,
                                      "process_id":user.file_id})
