@@ -3,4 +3,4 @@ class FileStatus(Enum):
     UPLOADED='uploaded'
     PROCESSED='processed'
     INDEXED='indexed'
-    DUPLICATED='duplicated'
+
