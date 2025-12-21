@@ -1,7 +1,9 @@
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from models import UserSchema ,FileStatus
-class UserModel:
+from .base_model import BaseDataModel
+class UserModel(BaseDataModel):
     def __init__(self, database_client:AsyncIOMotorDatabase):
+        super().__init__()
         self.collection = database_client['user']
     
     async def insert_one(self,user_schema:UserSchema):
