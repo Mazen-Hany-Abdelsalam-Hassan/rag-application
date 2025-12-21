@@ -1,3 +1,3 @@
 from .response_enum import ResponseEnum
 from .allowed_file_extension import AllowedFileExtension
-from .status import Status
+from .file_status import FileStatus

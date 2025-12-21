@@ -1,5 +1,5 @@
 from enum import Enum
-class Status(Enum):
+class FileStatus(Enum):
     UPLOADED='uploaded'
     PROCESSED='processed'
     INDEXED='indexed'
