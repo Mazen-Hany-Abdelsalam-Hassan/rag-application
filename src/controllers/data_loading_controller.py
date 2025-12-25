@@ -5,9 +5,9 @@ import logging
 import os
 
 class DataLoadingController(BaseController):
-    def __init__(self , User:str):
+    def __init__(self , Project:str):
         super().__init__()
-        self.user = User
+        self.project = Project
         self.logger = logging.getLogger(__name__)
     
     def _is_valid_type(self,file:UploadFile):
@@ -29,8 +29,8 @@ class DataLoadingController(BaseController):
             file_name =DataLoadingController.clean_file_name(file.filename)
             file_name, extension = file_name.split('.')
             file_name = file_name+"_"+DataLoadingController.random_string()
-            self.user_directory = os.path.join(self.save_path,self.user)
-            os.makedirs(self.user_directory , exist_ok=True)
+            self.project_directory = os.path.join(self.save_path,self.project)
+            os.makedirs(self.project_directory , exist_ok=True)
             return file_name +'.'+extension
         else :
             return  False
