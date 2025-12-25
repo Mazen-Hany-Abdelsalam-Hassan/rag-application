@@ -4,8 +4,8 @@ from bson.objectid import ObjectId
 
 class ProjectSchema(BaseModel):
     """
-    This Schema contains every details related to any upload transaction 
-    preformed by user
+    This Schema contains every details related to any available 
+    project and their file (data needed to be processed) 
     """
     id:ObjectId=Field(None , alias="_id") ##
     project_id:str
