@@ -1,2 +1,2 @@
 from .data_loading_controller import DataLoadingController
-from .data_processing_controllers import SimpleDataProcessor
+from .data_processor import DataProcessor
