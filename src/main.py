@@ -1,10 +1,8 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from routes import BaseRoute , DataRoute
+from routes import BaseRoute , DataRoute,UserOverviewRoute
 from utils import Settings ,get_settings
 from motor.motor_asyncio import AsyncIOMotorClient
-from models import UserModel
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     env_var = get_settings()
@@ -18,3 +16,4 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(BaseRoute)
 app.include_router(DataRoute)
+app.include_router(UserOverviewRoute)
