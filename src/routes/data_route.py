@@ -1,11 +1,17 @@
 from fastapi import APIRouter ,status,UploadFile , Request
 from fastapi.responses import JSONResponse 
 from utils import Settings 
-from controllers import DataLoadingController ,DataProcessingController
+from controllers import DataLoadingController,DataProcessor
 import aiofiles
 import os
 import hashlib
-from models import ProcessResponse ,ResponseEnum,ProjectModel
+from models import (ProjectModel , 
+                    ResponseEnum,
+                    DataProcessingRequest,
+                    ProcessModel,
+                    ProcessSchema,
+                    ChunkModel,
+                    ChunkSchema)
 DataRoute =APIRouter(prefix="/Rag", 
                            tags=["welcome", "rag"])
 @DataRoute.post("/upload_file/{Project}")
@@ -40,7 +46,7 @@ async def file_upload(request:Request,Project:str, file:UploadFile):
                     os.remove(file_path)
                     break
                 await f.write(chunk)
-        
+        #print(await project_model.search_by_project(project_id=Project , page=1))
         return JSONResponse(content={"message": ResponseEnum.FILE_UPLOADED_SUCCESSFULLY.value,
                                      "process_id":project.file_id})
     
@@ -49,19 +55,69 @@ async def file_upload(request:Request,Project:str, file:UploadFile):
     
 
 @DataRoute.post("/process/{Project}")
-async def process(Project:str , process_request:ProcessResponse):
-    process_controller = DataProcessingController(user = Project)
-    content= process_controller.load_file(process_request.file_id)
+async def process( request:Request,
+                  Project:str,
+                 process_request:DataProcessingRequest):
+    #####Database Interaction
+    database_client = request.app.Database
+    process_model =  await ProcessModel.init_collection(database_client=database_client)
+    ######
 
-    if  not content:
-        return JSONResponse(content={"message": ResponseEnum.FILE_PROCESSING_FAIL.value})
+    ##### Database Interaction
+    chunk_model = await ChunkModel.init_collection(database_client=database_client)
+    #####
+    
+    #####Factory  Select your class
+    ProcessController = DataProcessor.load_processor(
+        processing_method=process_request.processing_method)
+    if not ProcessController:
+        return JSONResponse(content={"message":
+                ResponseEnum.WRONG_PROCESSING_METHOD.value},
+                status_code=status.HTTP_400_BAD_REQUEST)
+    ######
+    ######  Factory initiate object
+    process_controller = ProcessController(
+    project=Project,
+    file_id = process_request.file_id,
+    processing_parameter=process_request.processing_parameter)
+    #######
+    
+    ####### Validator
+    if not process_controller.valid_processing:
+        return JSONResponse(content={"message": ResponseEnum.WRONG_PROCESSING_PARAMETER.value},
+                      status_code=status.HTTP_400_BAD_REQUEST)
+    
+    if  not process_controller.file_exist:
+        return JSONResponse(content={"message": ResponseEnum.FILE_PROCESSING_FAIL.value},
+                      status_code=status.HTTP_400_BAD_REQUEST)
+    
+    #######
+    ####### insert to DB 
+    FingerPrint = process_controller.create_fingerprint()
+    print(FingerPrint)
+    
+    process_schema = ProcessSchema(_id = FingerPrint , 
+                  file_id=process_request.file_id,
+                  project_id=Project,
+                  processing_pipeline=process_request.processing_method,
+                  processing_parameter= process_request.processing_parameter
+                  )
+    
+    
 
-    chunks_text,meta_data = process_controller.chunk_file(
-        loaded_pdf=content,
-        chunk_size=process_request.chunk_size,
-        chunk_overlap=process_request.chunk_overlap)
+    exist = await process_model.insert_process_if_not_exist(
+                process=process_schema)
+
+
+    ####### Data Processing
     
-    #return chunks_text , meta_data
-     
-    return JSONResponse({"content":ResponseEnum.FILE_PROCESSING_SUCCESS.value})
+    if not exist:
+        Content= process_controller.load_file()
+        Chunks = process_controller.chunk_file(Content)
+        _= await chunk_model.insert_chunks(chunks=Chunks)
+        _ = await process_model.update(id = FingerPrint,processed = 1)
+
+        
     
+    return JSONResponse({"content":ResponseEnum.FILE_PROCESSING_SUCCESS.value,
+                         "process_id" :FingerPrint})
