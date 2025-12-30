@@ -12,3 +12,14 @@ class DataProcessingInterface(ABC):
     def chunk_file(self,
                    **processing_parameter):
         pass
+    
+    @abstractmethod
+    def create_fingerprint(self):
+        pass
+    
+    @abstractmethod
+    def validate_processing_parameter(self):
+        pass
+    @abstractmethod
+    def validate_file_existence(self):
+        pass

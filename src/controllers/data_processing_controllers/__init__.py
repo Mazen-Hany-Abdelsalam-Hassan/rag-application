@@ -1,1 +1,1 @@
-from .simple_data_processor import SimpleDataProcessor
+from .simple_processing import SimpleProcessing
