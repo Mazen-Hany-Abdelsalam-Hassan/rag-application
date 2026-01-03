@@ -12,7 +12,7 @@ class InferenceServiceFactoryInterface(ABC):
                     prompt:str, 
                     history:List[Dict[str , str]],
                     max_output_token:int, 
-                    tempreature:float)-> str:
+                    temperature:float)-> str:
             pass
     @abstractmethod
     def embed_text(self,

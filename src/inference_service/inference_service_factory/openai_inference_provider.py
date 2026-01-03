@@ -9,10 +9,10 @@ class OpenaiInferenceProvider(InferenceServiceFactoryInterface):
                 api_key:str=None ,
                 max_input_token:int=1000,
                 max_output_token:int = 1000,
-                tempreature:int = .1):
+                temperature:int = .1):
         self.max_input_token = max_input_token
         self.max_output_token = max_output_token
-        self.tempreature = tempreature
+        self.temperature = temperature
         
         self.llm_model_id = None
         self.embedding_model_id= None
@@ -36,7 +36,7 @@ class OpenaiInferenceProvider(InferenceServiceFactoryInterface):
                     prompt:str,
                     history:List[Dict[str,str]],
                     max_output_token = None,
-                    tempreature = None):
+                    temperature = None):
         
         if not self.client :
             self.logger.error(f"The client is not available")
@@ -45,8 +45,8 @@ class OpenaiInferenceProvider(InferenceServiceFactoryInterface):
             self.logger.error("The generation mode is not assigned")
         
         max_output_token = max_output_token if max_output_token else self.max_output_token
-        tempreature = tempreature if tempreature else self.tempreature
-        self.logger.info(f"max_output_token is {max_output_token},tempreature is {tempreature}")
+        temperature = temperature if temperature else self.temperature
+        self.logger.info(f"max_output_token is {max_output_token},temperature is {temperature}")
         prompt = self.process_input_token(prompt=prompt)
         history.append(
             self.construct_prompt(prompt=prompt)
@@ -55,7 +55,7 @@ class OpenaiInferenceProvider(InferenceServiceFactoryInterface):
             model=self.llm_model_id , 
             messages=history,
             max_tokens=max_output_token ,
-            temperature=tempreature
+            temperature=temperature
         )
         if not(llm_response) or  len(llm_response.choices)==0 or not(llm_response.choices[0]) or not(llm_response.choices[0].message.content):
             self.logger.error("No response from model")
@@ -88,5 +88,3 @@ class OpenaiInferenceProvider(InferenceServiceFactoryInterface):
     def process_input_token(self,prompt):
         return prompt[:self.max_input_token]
     
-
-        

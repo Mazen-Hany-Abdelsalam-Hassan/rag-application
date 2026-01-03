@@ -20,7 +20,7 @@ class DataLoadingController(BaseController):
         if file.size  <= self.max_size:   
             return True
         else:
-            self.logger.error(ResponseEnum.FILE_SIZE_EXCEDED.value)
+            self.logger.error(ResponseEnum.FILE_SIZE_EXCEEDED.value)
             return False  
     
     

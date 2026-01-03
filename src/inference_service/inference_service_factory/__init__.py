@@ -1,1 +1,1 @@
-from .openai_infernce_provider import OpenaiInferenceProvider
+from .openai_inference_provider import OpenaiInferenceProvider

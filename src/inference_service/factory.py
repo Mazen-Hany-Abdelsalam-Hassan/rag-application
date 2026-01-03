@@ -12,7 +12,7 @@ class Factory:
                                     api_key=self.config.OPENAI_KEY,
                                     max_input_token= self.config.MAX_INPUT_TOKEN,
                                     max_output_token=self.config.MAX_OUTPUT_TOKEN,
-                                    tempreature=self.config.TEMPREATURE)
+                                    temperature=self.config.TEMPERATURE)
         else:
             raise NotImplementedError(f'{backend} is not implemented')
             
