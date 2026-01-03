@@ -35,14 +35,14 @@ class QdrantVectorDatabase(VectorDbInterface):
     
     def is_collection_exist(self, collection_name:str)->bool:
         if not self.client :
-            self.logger.error("Qqdrant DB disconected ")
+            self.logger.error("Qdrant DB disconnected ")
             return False
         response = self.client.collection_exists(collection_name=collection_name)
         return response
     
     def delete_collection(self, collection_name):
         if not self.client:
-            self.logger.error("Qqdrant DB disconected ")
+            self.logger.error("Qdrant DB disconnected ")
             return False
         if not self.is_collection_exist(collection_name=collection_name):
             self.logger.warning(f"This collection {collection_name} not exist")
@@ -53,7 +53,7 @@ class QdrantVectorDatabase(VectorDbInterface):
     
     def create_collection(self, collection_name, remove_if_exist):
         if not self.client :
-            self.logger.error("Qqdrant DB disconected ")
+            self.logger.error("Qdrant DB disconnected ")
             return False
         if remove_if_exist and self.is_collection_exist(collection_name=collection_name):
             _ = self.delete_collection(collection_name=collection_name)
@@ -62,7 +62,7 @@ class QdrantVectorDatabase(VectorDbInterface):
                 vectors_config=VectorParams(size=self.vector_size,
                                             distance=self.similarity_metric),
             )
-            self.logger.warning(f"collection {collection_name} has been reseted")
+            self.logger.warning(f"collection {collection_name} has been rested")
             return True 
         elif not(self.is_collection_exist(collection_name=collection_name)):
             self.client.create_collection(
@@ -70,14 +70,14 @@ class QdrantVectorDatabase(VectorDbInterface):
                 vectors_config=VectorParams(size=self.vector_size,
                 distance=self.similarity_metric),
             )
-            self.logger.info(f"collection {collection_name} has been creted")
+            self.logger.info(f"collection {collection_name} has been created")
             return True 
         self.logger.info(f"collection {collection_name} already exist")
         return False
     
     def get_all_collection(self):
         if not self.client :
-            self.logger.error("Qqdrant DB disconected ")
+            self.logger.error("Qdrant DB disconnected ")
             return False
         return self.client.get_collections().collections
 
@@ -90,7 +90,7 @@ class QdrantVectorDatabase(VectorDbInterface):
             self.logger.error("chunk  must be string")
             return False
         if not self.client:
-            self.logger.error("Qqdrant DB disconected ")
+            self.logger.error("Qdrant DB disconnected ")
             return False
         if len(vector) != self.vector_size:
             self.logger.error(f"The vector length must be {self.vector_size}")
@@ -105,7 +105,7 @@ class QdrantVectorDatabase(VectorDbInterface):
                 vector=vector)]
                 
                 )
-        self.logger.info("the chunk uploaded succesfully")
+        self.logger.info("the chunk uploaded successfully")
         return True
     
     def batch_insert_vector(self, vectors, collection_name, chunks, meta_data_list, batch_size: int, ids=None):
@@ -160,7 +160,7 @@ class QdrantVectorDatabase(VectorDbInterface):
             response.append(
                 VectorDBResponse(text_chunk=chunk,
                 meta_data=meta_data,
-                socre = score))
+                score = score))
         return response
 
             
