@@ -68,7 +68,7 @@ class SimpleProcessing(BaseController,
         chunks = text_splitter.split_documents(loaded_pdf)
         
 
-        chunks_in_schema = [ ## The shape of chunks of simple processing
+        chunks_in_schema = [
                 
         ChunkSchema(process_id=self.FingerPrint,
             chunk_text=chunk.page_content,
@@ -86,5 +86,5 @@ class SimpleProcessing(BaseController,
         chunk_overlap = self.processing_parameter.chunk_overlap
         process_id = self.project+"_"+self.file_id+"_"+"Simple" \
              +"_"+str(chunk_size)+"_"+str(chunk_overlap)
-        return process_id          
+        return process_id.replace('.','_')         
     
