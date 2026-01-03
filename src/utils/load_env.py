@@ -8,11 +8,10 @@ class Settings(BaseSettings):
     MAXIMUM_ALLOWED_SIZE:int ## 5MIB of data 
     MONGO_DB_CLIENT:str 
     MONGO_DB_NAME:str
-
-    OPENAI_KEY:Optional[str] = "OLLAMA"
     OPENAI_URL:str
+    OPENAI_KEY:Optional[str]
     CHUNK_SIZE:int
-    TEMPREATURE:float
+    TEMPERATURE:float
     MAX_OUTPUT_TOKEN:int
     MAX_INPUT_TOKEN:int
 
