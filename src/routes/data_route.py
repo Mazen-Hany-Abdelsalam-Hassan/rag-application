@@ -10,8 +10,7 @@ from models import (ProjectModel ,
                     DataProcessingRequest,
                     ProcessModel,
                     ProcessSchema,
-                    ChunkModel,
-                    ChunkSchema)
+                    ChunkModel)
 DataRoute =APIRouter(prefix="/Rag", 
                            tags=["welcome", "rag"])
 @DataRoute.post("/upload_file/{Project}")
