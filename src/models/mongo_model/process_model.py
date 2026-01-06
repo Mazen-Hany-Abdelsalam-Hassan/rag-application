@@ -44,6 +44,13 @@ class ProcessModel(BaseDataModel):
 
     
     ## Retrieve
+    async def find_by_id(self,
+                         id:str):
+        result = await self.collection.find_one({"_id":id})
+        if result:
+            return ProcessSchema(**result)
+        return result
+
     async def find_by_project(self,
                     project_id:str,
                     processed:int=0,
@@ -120,8 +127,8 @@ class ProcessModel(BaseDataModel):
 
     async def update(self,
                     id:str,
-                    processed:int = 0, 
-                    indexed:int = 0):
+                    processed:int, 
+                    indexed:int):
         result = await self.collection.find_one_and_update(
              {'_id':id},
             
