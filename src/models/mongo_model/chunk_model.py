@@ -38,8 +38,8 @@ class ChunkModel(BaseDataModel):
                                             page_size).limit(page_size)
         documents = []
         async for document in cursor:
-            documents.append(document)    
-        return documents ,total_pages + 1
+            documents.append(ChunkSchema(**document))    
+        return documents ,total_pages 
 
     async def insert_chunks(self,
                             chunks:List[ChunkSchema],
