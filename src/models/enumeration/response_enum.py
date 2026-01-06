@@ -5,8 +5,14 @@ class ResponseEnum(Enum):
     FILE_TYPE_NOT_SUPPORTED= "File type not supported"
     FILE_UPLOADED_SUCCESSFULLY = "File uploaded successfully"
     FILE_NOT_UPLOADED_SUCCESSFULLY = "File not uploaded successfully"
-    FILE_PROCESSING_SUCCESS= "File processed successfully" 
+    FILE_PROCESSING_SUCCESS= "File processed successfully according to your parameter" 
     FILE_PROCESSING_FAIL = "File not processed successfully"
-    
     WRONG_PROCESSING_PARAMETER = "File processing parameter is not right"
     WRONG_PROCESSING_METHOD = "File processing method is not True"
+    
+    INDEXED_SUCCESSFULLY = "Indexed successfully"
+    INDEXING_FAILED = "Indexing Failed"
+    PROCESS_NOT_EXIST="Process not exist"
+    NOT_PROCESSED_YET = "The processing not finished yet" 
+    
+
