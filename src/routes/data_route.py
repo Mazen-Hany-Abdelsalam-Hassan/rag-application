@@ -93,7 +93,6 @@ async def process( request:Request,
     #######
     ####### insert to DB 
     FingerPrint = process_controller.create_fingerprint()
-    print(FingerPrint)
     
     process_schema = ProcessSchema(_id = FingerPrint , 
                   file_id=process_request.file_id,
@@ -114,7 +113,7 @@ async def process( request:Request,
         Content= process_controller.load_file()
         Chunks = process_controller.chunk_file(Content)
         _= await chunk_model.insert_chunks(chunks=Chunks)
-        _ = await process_model.update(id = FingerPrint,processed = 1)
+        _ = await process_model.update(id = FingerPrint,processed = 1, indexed = 0)
 
         
     
