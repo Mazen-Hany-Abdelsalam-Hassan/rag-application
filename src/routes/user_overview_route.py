@@ -60,7 +60,11 @@ async def show_process(
             page=process_overview.page)
     
     results = [
-        {"file":result.file_id , 
+        {
+        "process_id":result.id,
+        "file":result.file_id , 
+        "processed":result.processed ,
+        "indexed":result.indexed ,
          "processing_parameter":result.processing_parameter ,
          "upload_time":result.upload_time.strftime("%b %d, %Y · %I:%M %p")}
         for result in results ]
