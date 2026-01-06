@@ -32,11 +32,12 @@ class VectorDbInterface(ABC):
 
     @abstractmethod
     def batch_insert_vector(self, 
-                vector:List[List[float]],   
+                vectors:List[List[float]],   
                 collection_name:str ,
-                chunk:List[str],
-                meta_data:List[str],
-                batch_size:int=50)->bool:
+                chunks:List[str],
+                meta_data_list:List[str],
+                batch_size:int=50,
+                ids=None)->bool:
         pass
     @abstractmethod
     def simple_vector_search(self,vector:List[float] ,topk:int ):
