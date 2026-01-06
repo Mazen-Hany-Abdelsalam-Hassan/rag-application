@@ -1,2 +1,2 @@
-from .providers import QdrantVectorDatabase
+from .vector_db_factory import VectorDatabaseFactory
 from .vector_db_interface import VectorDbInterface

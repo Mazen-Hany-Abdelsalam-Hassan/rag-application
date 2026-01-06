@@ -7,4 +7,5 @@ class QdrantDistanceEnum(Enum):
     cosine= Distance.COSINE
     euclid = Distance.EUCLID
     
-
+class VectorDatabaseProvider(Enum):
+    Qdrant= "Qdrant"
