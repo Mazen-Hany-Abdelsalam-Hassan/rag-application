@@ -1,2 +1,3 @@
 from .data_loading_controller import DataLoadingController
 from .data_processor import DataProcessor
+from .nlp_controller import NaiveIndexing
