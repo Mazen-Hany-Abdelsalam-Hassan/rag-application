@@ -9,12 +9,19 @@ from qdrant_client.models import PointStruct
 from models import VectorDBResponse
 
 class QdrantVectorDatabase(VectorDbInterface):
-    def __init__(self,database_path:str,similarity_metric:Literal['cosine','euclid'],topk:int,vector_size:int ):
+    def __init__(
+            self,
+            qdrant_path:str,
+            similarity_metric:Literal['cosine','euclid'],
+            topk:int,
+            vector_size:int,
+            qdrant_url:str ):
+        self.qdrant_url=qdrant_url
         self.client = None
         self.topk = topk
         self.vector_size = vector_size
         self.logger = logging.getLogger(__name__)
-        self.database_path = database_path
+        self.qdrant_path = qdrant_path
         if similarity_metric =='cosine':
             self.similarity_metric = QdrantDistanceEnum.cosine.value
             self.logger.info("Used similarity metric in Qdrant is Cosine")
@@ -26,9 +33,16 @@ class QdrantVectorDatabase(VectorDbInterface):
     
     
     def connect(self):
-        self.client = QdrantClient(path=self.database_path,
-                                   prefer_grpc=False  )
+        if self.qdrant_url:
+            self.client = QdrantClient(
+                self.qdrant_url,
+                prefer_grpc=False  )
+        elif self.qdrant_path:
+            self.client = QdrantClient(path=self.qdrant_path,
+                                       prefer_grpc=False)    
+        
         self.logger.info("Qdrant DB connected")
+    
     def disconnect(self):
         self.client = None
         self.logger.info("Qdrant DB disconnected")
@@ -109,7 +123,7 @@ class QdrantVectorDatabase(VectorDbInterface):
         return True
     
     def batch_insert_vector(self, vectors, collection_name, chunks, meta_data_list, batch_size: int, ids=None):
-        if not self.is_collection_exist(collection_name=collection_name):
+        if not self.is_collection_exist(collection_name=collection_name):   
             self.logger.error(f"The collection {collection_name} not exist")
             return False
         try:
