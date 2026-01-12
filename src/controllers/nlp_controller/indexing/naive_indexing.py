@@ -16,7 +16,8 @@ class NaiveIndexing(BaseController):
         self.project_name = project_name
     async def embed(self,
               chunks_list:List[ChunkSchema],
-              embedding_client:InferenceServiceFactoryInterface):
+              embedding_client:InferenceServiceFactoryInterface,
+              use_index=True):
         
         embedding_vectors = [
         embedding_client.embed_text(chunk.chunk_text)    
@@ -30,7 +31,6 @@ class NaiveIndexing(BaseController):
         meta_data = [
             {
                 "meta_data":chunk.chunk_meta_data,
-                "process_id":self.process_id,
                 "chunk_order":chunk.chunk_order 
             }
             for chunk in chunks_list
@@ -40,15 +40,18 @@ class NaiveIndexing(BaseController):
         if len(embedding_vectors)==0 :
             return False
 
-        self.vector_database.create_collection(self.project_name ,
-                                                      remove_if_exist=False)
+        self.vector_database.create_collection(
+                                        self.project_name,
+                                        )
+        
         result = self.vector_database.batch_insert_vector(
 
             vectors = embedding_vectors,
             collection_name=self.project_name,
             chunks=text_chunks,
             meta_data_list=meta_data,
-            batch_size=50 
+            batch_size=50 ,
+            payload_index={"process_id":self.process_id} if use_index  else {}
             )   
         return result
 
