@@ -8,5 +8,7 @@ from .processing_schema_request import SimpleProcessingSchemaRequest
 from .mongo_model import ProjectModel , ProcessModel,ChunkModel
 from .request_schema import( DataProcessingRequest,
                             UploadedFileOverviewRequest,
-                            ProcessOverviewRequest)
+                            ProcessOverviewRequest,
+                            DataIndexingRequest)
 from .enumeration import ProcessingMethod
+from .vector_db_response import VectorDBResponse
