@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-from qdrant_client import QdrantClient
 from contextlib import asynccontextmanager
 from routes import BaseRoute , DataRoute,UserOverviewRoute ,NLP_Route
 from utils import Settings ,get_settings
