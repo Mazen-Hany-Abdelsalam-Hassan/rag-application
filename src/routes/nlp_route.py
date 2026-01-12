@@ -3,17 +3,19 @@ from fastapi.responses import JSONResponse
 from utils import Settings 
 from controllers import NaiveIndexing
 from typing import List
-from  models import (
-                    ChunkModel ,
+from  models import (ChunkModel ,
                     ProcessModel,
-                    ResponseEnum)
+                    ResponseEnum,
+                    DataIndexingRequest)
+
 NLP_Route=APIRouter(prefix="/Rag/NLP", 
                     tags=["welcome", "rag"])
 
 @NLP_Route.get("/index/{Project}")
 async def index_project(request:Request,
                         Project:str,
-                        process_id:str):
+                        indexing_request:DataIndexingRequest):
+    process_id = indexing_request.process_id
     database_client = request.app.Database
     vector_db_client = request.app.vector_DB_client
     embedding_model = request.app.embedding_model
@@ -36,28 +38,27 @@ async def index_project(request:Request,
     
     if process.indexed:
         return JSONResponse(
-            content={"message":ResponseEnum.FILE_INDEXED_SUCCESSFULLY.value}
+            content={"message":ResponseEnum.INDEXED_SUCCESSFULLY.value}
         )
-    
-
-    chunks = []
-    page=1
-    while True :
-        result = await chunk_model.find_by_process_id(process_id=process_id,page_size=50,page=page)
-        if len(result[0])==0:
-            break
-        page+=1
-        chunks.extend(result[0])
     
     nlp_controller = NaiveIndexing(
         process_id = process_id,
         project_name=Project,
         vector_database=vector_db_client)
+
+
+    page=1
+    while True :
+        result = await chunk_model.find_by_process_id(process_id=process_id,page_size=200,page=page)
+        if len(result[0])==0:
+            break
+        indexing_done = await nlp_controller.embed(
+        chunks_list=result[0],
+        embedding_client=embedding_model,
+        use_index=True)
+        page+=1
+        
     
-    indexing_done = await nlp_controller.embed(
-        chunks_list=chunks,
-        embedding_client=embedding_model
-                         )
     
     if not indexing_done:
         return JSONResponse({
@@ -71,11 +72,6 @@ async def index_project(request:Request,
 
     
 
-            
-
-
-
-        
 
 @NLP_Route.get("/query/{Project}")
 async def query(request:Request,

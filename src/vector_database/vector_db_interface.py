@@ -37,10 +37,15 @@ class VectorDbInterface(ABC):
                 chunks:List[str],
                 meta_data_list:List[str],
                 batch_size:int=50,
+                payload_index:dict=None,
                 ids=None)->bool:
         pass
     @abstractmethod
-    def simple_vector_search(self,vector:List[float] ,topk:int ):
+    def vector_search(
+        self,
+        vector:List[float] ,
+        topk:int,
+        data_filter:dict= None):
         pass
 
 

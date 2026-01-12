@@ -65,19 +65,12 @@ class QdrantVectorDatabase(VectorDbInterface):
         self.logger.info(f"The collection {collection_name} deleted ")
         return True
     
-    def create_collection(self, collection_name, remove_if_exist):
+    def create_collection(self,collection_name,
+                          indices:List[dict]=[{"process_id":
+                                                    "keyword"}]):
         if not self.client :
             self.logger.error("Qdrant DB disconnected ")
             return False
-        if remove_if_exist and self.is_collection_exist(collection_name=collection_name):
-            _ = self.delete_collection(collection_name=collection_name)
-            self.client.create_collection(
-                collection_name= collection_name ,
-                vectors_config=VectorParams(size=self.vector_size,
-                                            distance=self.similarity_metric),
-            )
-            self.logger.warning(f"collection {collection_name} has been rested")
-            return True 
         elif not(self.is_collection_exist(collection_name=collection_name)):
             self.client.create_collection(
                 collection_name= collection_name ,
@@ -85,6 +78,16 @@ class QdrantVectorDatabase(VectorDbInterface):
                 distance=self.similarity_metric),
             )
             self.logger.info(f"collection {collection_name} has been created")
+            try:
+                for index in indices:
+                    for field_name, field_schema in index.items():
+                        self.client.create_payload_index(
+                        collection_name=collection_name,
+                        field_name=field_name,
+                        field_schema=field_schema)
+            except Exception as e:
+                self.logger.error(f"Failed to create payload index: {e}")
+                
             return True 
         self.logger.info(f"collection {collection_name} already exist")
         return False
@@ -96,7 +99,13 @@ class QdrantVectorDatabase(VectorDbInterface):
         return self.client.get_collections().collections
 
 
-    def insert_vector(self,vector, collection_name, chunk, meta_data,id=None):
+    def insert_vector(self,
+                      vector,
+                      collection_name,
+                      chunk, 
+                      meta_data,
+                      payload_index:dict,
+                      id=None):
         if not self.is_collection_exist(collection_name=collection_name):
             self.logger.error(f"The collection {collection_name} not exist")
             return False
@@ -108,21 +117,32 @@ class QdrantVectorDatabase(VectorDbInterface):
             return False
         if len(vector) != self.vector_size:
             self.logger.error(f"The vector length must be {self.vector_size}")
+        
+        payload = {
+                "chunk": chunk,
+                "meta_data":meta_data} 
+        if payload_index:
+            payload.update(payload_index)
         _ = self.client.upsert(
         collection_name=collection_name,
         points=[
         PointStruct(
             id=id if id else uuid.uuid1(),
-            payload={
-                "chunk": chunk,
-                "meta_data":meta_data},
-                vector=vector)]
-                
+            payload=payload,
+            vector=vector)]
                 )
         self.logger.info("the chunk uploaded successfully")
         return True
     
-    def batch_insert_vector(self, vectors, collection_name, chunks, meta_data_list, batch_size: int, ids=None):
+    def batch_insert_vector(self, 
+                            vectors, 
+                            collection_name, 
+                            chunks, 
+                            meta_data_list, 
+                            batch_size: int,
+                            payload_index:dict,
+                            ids=None):
+        ## with batch insert add the index as if you have only one chunk
         if not self.is_collection_exist(collection_name=collection_name):   
             self.logger.error(f"The collection {collection_name} not exist")
             return False
@@ -145,7 +165,8 @@ class QdrantVectorDatabase(VectorDbInterface):
             
             points = [
                 PointStruct(id=id, vector=vector, payload={"text": chunk,
-                                                            "meta_data": meta_data})
+                                                            "meta_data": meta_data,
+                                                           **(payload_index or {}) })
                 for id, vector, chunk, meta_data in zip(ids_batch, vectors_batch, chunks_batch, meta_data_batch)
             ]
             self.client.upsert(
@@ -157,7 +178,7 @@ class QdrantVectorDatabase(VectorDbInterface):
         return True
 
 
-    def simple_vector_search(self ,vector:List[float]
+    def vector_search(self ,vector:List[float]
                             ,collection_name
                             ,topk):
         results = self.client.query_points(
