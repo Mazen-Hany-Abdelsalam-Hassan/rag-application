@@ -9,6 +9,7 @@ class BaseController:
         self.source_path = os.path.dirname(os.path.dirname(__file__))
         self.max_size = 1_048_576 * self.environment_variable.MAXIMUM_ALLOWED_SIZE
         self.save_path = os.path.join(self.source_path,'assets')
+        self.separator = ":+:" # This separator is used in data processing and data generation
     @staticmethod
     def clean_file_name(file_name:str):
         cleaned = re.sub(r'[\/:*?"<>|]', '', file_name)

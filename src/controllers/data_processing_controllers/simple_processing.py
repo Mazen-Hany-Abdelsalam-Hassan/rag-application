@@ -84,7 +84,9 @@ class SimpleProcessing(BaseController,
     def create_fingerprint(self):
         chunk_size = self.processing_parameter.chunk_size
         chunk_overlap = self.processing_parameter.chunk_overlap
-        process_id = self.project+"_"+self.file_id+"_"+"Simple" \
-             +"_"+str(chunk_size)+"_"+str(chunk_overlap)
+        process_id = self.project+self.separator + self.file_id\
+                    +self.separator +"Simple" \
+                    +self.separator +str(chunk_size)\
+                    +self.separator +str(chunk_overlap)
         return process_id.replace('.','_')         
     
