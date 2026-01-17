@@ -1,12 +1,14 @@
 from fastapi import APIRouter ,status,UploadFile , Request
 from fastapi.responses import JSONResponse
 from utils import Settings 
-from controllers import NaiveIndexing
+from controllers import NaiveIndexing,NaiveGeneration
 from typing import List
+import asyncio
 from  models import (ChunkModel ,
                     ProcessModel,
                     ResponseEnum,
-                    DataIndexingRequest)
+                    DataIndexingRequest,
+                    SimpleQuestionRequest)
 
 NLP_Route=APIRouter(prefix="/Rag/NLP", 
                     tags=["welcome", "rag"])
@@ -56,6 +58,7 @@ async def index_project(request:Request,
         chunks_list=result[0],
         embedding_client=embedding_model,
         use_index=True)
+        await asyncio.sleep(1)
         page+=1
         
     
@@ -75,8 +78,20 @@ async def index_project(request:Request,
 
 @NLP_Route.get("/query/{Project}")
 async def query(request:Request,
-                Project,
-                process_ids:List[str]):
+                Project:str,
+                question_request:SimpleQuestionRequest):
+    vector_db_client = request.app.vector_DB_client
+    embedding_model = request.app.embedding_model
+    llm_model = request.app.llm_model
+
+    answer_generation = NaiveGeneration(
+                    project_id=Project,
+                    process_ids=question_request.process_ids,
+                    embedding_model=embedding_model,
+                    llm_model=llm_model,
+                    vector_database_client=vector_db_client)
     
-    pass
+    answer = answer_generation.search(question=question_request.question ,
+                             topk=question_request.topk)
+    return answer
     ##Search without memory 
