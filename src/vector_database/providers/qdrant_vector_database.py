@@ -178,25 +178,27 @@ class QdrantVectorDatabase(VectorDbInterface):
         return True
 
 
-    def vector_search(self ,vector:List[float]
-                            ,collection_name
-                            ,topk):
+    def vector_search(self ,
+                    vector:List[float],
+                    collection_name,
+                    filter:dict=None,
+                    topk=None):
+        topk = topk if topk else self.topk
         results = self.client.query_points(
                     collection_name=collection_name,
                     query=vector,
+                    query_filter=filter,
                     limit=topk).points
-        
-        response = []
-        for result in results:
-            payload = result.payload
-            score = result.score
-            chunk = payload['chunk']
-            meta_data = payload['meta_data']
-            response.append(
-                VectorDBResponse(text_chunk=chunk,
-                meta_data=meta_data,
-                score = score))
-        return response
+
+        vector_db_response = [
+            VectorDBResponse(
+                text_chunk = point.payload["text"],
+                meta_data  = point.payload['meta_data'] ,
+                score = point.score)
+            for point in results
+        ]
+
+        return vector_db_response
 
             
         

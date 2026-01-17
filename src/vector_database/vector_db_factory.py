@@ -1,6 +1,6 @@
 from .providers import QdrantVectorDatabase
-from .vector_db_enum import (VectorDatabaseProvider,
-                             QdrantDistanceEnum)
+from .vector_db_enum import VectorDatabaseProvider
+                             
 from utils import Settings
 class VectorDatabaseFactory:
     def __init__(self,config:Settings):
@@ -15,5 +15,4 @@ class VectorDatabaseFactory:
                 topk=self.config.TOPK,
                 vector_size=self.config.EMBEDDING_MODEL_DIM)
         else:
-            raise NotImplementedError(f'{vector_database_name} is not implemented')
-            
+            raise NotImplementedError(f'{vector_database_name} is not implemented')        

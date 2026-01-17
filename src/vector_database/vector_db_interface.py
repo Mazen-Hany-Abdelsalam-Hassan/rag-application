@@ -1,4 +1,5 @@
 from abc import ABC , abstractmethod
+from models import VectorDBResponse
 from typing import List
 class VectorDbInterface(ABC):
     @abstractmethod
@@ -42,10 +43,11 @@ class VectorDbInterface(ABC):
         pass
     @abstractmethod
     def vector_search(
-        self,
-        vector:List[float] ,
-        topk:int,
-        data_filter:dict= None):
+        self ,
+        vector:List[float],
+        collection_name,
+        filter:dict=None,
+        topk=None):
         pass
 
 
