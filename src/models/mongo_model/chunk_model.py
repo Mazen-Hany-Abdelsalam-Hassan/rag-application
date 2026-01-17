@@ -44,17 +44,17 @@ class ChunkModel(BaseDataModel):
     async def insert_chunks(self,
                             chunks:List[ChunkSchema],
                             batch_size:int = 50):
-
         for start_index in range(0 , 
                                  len(chunks) , batch_size):
             
-            to_inserted_chunks = chunks[start_index:batch_size]
+            to_inserted_chunks = chunks[start_index:
+                                        start_index+batch_size]
             
             to_inserted_chunks = [chunk.model_dump(exclude_none=True,
-                                by_alias=True) for chunk in  chunks]
+                                by_alias=True) for chunk in  to_inserted_chunks]
             
             
-            await self.collection.insert_many(to_inserted_chunks)
+            await self.collection.insert_many(to_inserted_chunks,ordered=False)
         return True 
     
     async def delete_by_process_id(self,process_id:str):
