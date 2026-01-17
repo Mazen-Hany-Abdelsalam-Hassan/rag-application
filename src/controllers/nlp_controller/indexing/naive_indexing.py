@@ -1,6 +1,7 @@
 from ...base_controller import BaseController
 from models import  ChunkSchema
 from typing import List
+import asyncio
 from inference_service import InferenceServiceFactoryInterface
 from vector_database import VectorDbInterface
 import os 
@@ -19,10 +20,16 @@ class NaiveIndexing(BaseController):
               embedding_client:InferenceServiceFactoryInterface,
               use_index=True):
         
-        embedding_vectors = [
-        embedding_client.embed_text(chunk.chunk_text)    
-            for chunk in chunks_list 
-        ]
+        
+        embedding_vectors = []
+        
+        for chunk in chunks_list:
+            emb = embedding_client.embed_text(chunk.chunk_text)
+            embedding_vectors.append(emb)
+            await asyncio.sleep(.1)
+        
+
+        
         text_chunks = [
             chunk.chunk_text
             for chunk in chunks_list 
