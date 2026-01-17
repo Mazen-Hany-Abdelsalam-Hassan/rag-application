@@ -9,6 +9,7 @@ from .mongo_model import ProjectModel , ProcessModel,ChunkModel
 from .request_schema import( DataProcessingRequest,
                             UploadedFileOverviewRequest,
                             ProcessOverviewRequest,
-                            DataIndexingRequest)
+                            DataIndexingRequest,
+                            SimpleQuestionRequest)
 from .enumeration import ProcessingMethod
 from .vector_db_response import VectorDBResponse
