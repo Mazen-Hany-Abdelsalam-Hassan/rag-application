@@ -28,7 +28,7 @@ class NaiveGeneration(BaseController):
         self.vector_database_client = vector_database_client
 
 
-    def search(self, question:str , topk=5):
+    def search_and_generate(self, question:str , topk=5):
         search_filter = self.make_search_filter()
         embedding_vector = self.embedding_model.embed_text(question)
         search_result = self.vector_database_client.vector_search(
@@ -55,12 +55,10 @@ class NaiveGeneration(BaseController):
         
         history = [{"role":"system"
             ,"content":system_prompt.safe_substitute()}]
-        #print(history)
-        print(final_prompt)
         try:
-            return self.llm_model.generate_text(final_prompt , history=history)
+            return self.llm_model.generate_text(final_prompt , history=history) , chunks
         except Exception as e:
-            print('bad')
+            self.logger.error(e)
         
     
     def extract_process_id(self):

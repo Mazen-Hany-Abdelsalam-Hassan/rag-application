@@ -13,7 +13,7 @@ from  models import (ChunkModel ,
 NLP_Route=APIRouter(prefix="/Rag/NLP", 
                     tags=["welcome", "rag"])
 
-@NLP_Route.get("/index/{Project}")
+@NLP_Route.post("/index/{Project}")
 async def index_project(request:Request,
                         Project:str,
                         indexing_request:DataIndexingRequest):
@@ -91,7 +91,7 @@ async def query(request:Request,
                     llm_model=llm_model,
                     vector_database_client=vector_db_client)
     
-    answer = answer_generation.search(question=question_request.question ,
+    answer , chunks = answer_generation.search_and_generate(question=question_request.question ,
                              topk=question_request.topk)
-    return answer
-    ##Search without memory 
+    return JSONResponse({"response":answer , 
+                        "chunks":chunks})
